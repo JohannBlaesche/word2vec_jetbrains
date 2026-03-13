@@ -47,3 +47,19 @@ def make_skipgram_pairs(tokens, window=2):
             pairs.append((center, context))
 
     return pairs
+
+    def build_vocab(tokens):
+
+        counts = Counter(tokens)
+
+        vocab = sorted(counts.keys())
+
+        word_to_idx = {w: i for i, w in enumerate(vocab)}
+        idx_to_word = {i: w for w, i in word_to_idx.items()}
+
+        encoded = [word_to_idx[w] for w in tokens]
+
+        # frequencies needed for negative sampling later
+        freqs = np.array([counts[w] for w in vocab], dtype=float)
+
+        return encoded, word_to_idx, idx_to_word, freqs
