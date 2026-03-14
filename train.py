@@ -1,5 +1,6 @@
 from word2vec.dataset import load_corpus, build_vocab, make_skipgram_pairs
 from word2vec.negatives import build_unigram_distribution, sample_negatives
+from word2vec.model import SkipGram
 import numpy as np
 
 
@@ -13,18 +14,18 @@ def main():
 
     dist = build_unigram_distribution(freqs)
 
+    model = SkipGram(len(word_to_idx), dim=16)
+
     rng = np.random.default_rng(0)
 
-    print("tokens:", len(tokens))
-    print("vocab size:", len(word_to_idx))
-    print("training pairs:", len(pairs))
+    # test one training step
+    center, pos = pairs[0]
 
-    # example negative sampling
-    center, context = pairs[0]
+    neg = sample_negatives(rng, dist, k=4, forbidden={center, pos})
 
-    neg = sample_negatives(rng, dist, k=5, forbidden={center, context})
+    loss = model.train_example(center, pos, neg)
 
-    print("\nexample negative samples:", neg)
+    print("example loss:", loss)
 
 
 if __name__ == "__main__":
