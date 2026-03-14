@@ -14,18 +14,32 @@ def main():
 
     dist = build_unigram_distribution(freqs)
 
-    model = SkipGram(len(word_to_idx), dim=16)
+    model = SkipGram(len(word_to_idx), dim=16, lr=0.05)
 
     rng = np.random.default_rng(0)
 
-    # test one training step
-    center, pos = pairs[0]
+    epochs = 50
+    neg_k = 4
 
-    neg = sample_negatives(rng, dist, k=4, forbidden={center, pos})
+    print("training examples:", len(pairs))
+    print("vocab size:", len(word_to_idx))
 
-    loss = model.train_example(center, pos, neg)
+    for epoch in range(epochs):
+        rng.shuffle(pairs)
 
-    print("example loss:", loss)
+        total_loss = 0.0
+
+        for center, pos in pairs:
+            neg = sample_negatives(rng, dist, k=neg_k, forbidden={center, pos})
+
+            loss = model.train_example(center, pos, neg)
+
+            total_loss += loss
+
+        avg_loss = total_loss / len(pairs)
+
+        if (epoch + 1) % 10 == 0 or epoch == 0:
+            print("epoch", epoch + 1, "loss", avg_loss)
 
 
 if __name__ == "__main__":
