@@ -20,15 +20,12 @@ class SkipGram:
         self.W_out = np.random.randn(vocab_size, dim) * 0.01
 
     def train_example(self, center, pos, negatives):
-        """
-        Performs one training step for a single skip-gram example.
-        """
 
         v = self.W_in[center]
         u_pos = self.W_out[pos]
         u_neg = self.W_out[negatives]
 
-        # ---- forward ----
+        # forward pass
 
         pos_score = np.dot(u_pos, v)
         neg_scores = np.dot(u_neg, v)
@@ -38,7 +35,7 @@ class SkipGram:
 
         loss = -np.log(pos_sig + 1e-10) - np.sum(np.log(neg_sig + 1e-10))
 
-        # ---- gradients ----
+        # gradients
 
         g_pos = pos_sig - 1
         g_neg = sigmoid(neg_scores)
@@ -48,11 +45,12 @@ class SkipGram:
 
         grad_v = g_pos * u_pos + np.sum(g_neg[:, None] * u_neg, axis=0)
 
-        # ---- update ----
+        # update
 
         self.W_in[center] -= self.lr * grad_v
         self.W_out[pos] -= self.lr * grad_u_pos
-        self.W_out[negatives] -= self.lr * grad_u_neg
+        for i, neg_idx in enumerate(negatives):
+            self.W_out[neg_idx] -= self.lr * grad_u_neg[i]
 
         return loss
 

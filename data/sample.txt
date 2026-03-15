@@ -1,0 +1,5 @@
+the quick brown fox jumps over the lazy dog
+the fox is quick and the dog is lazy
+the fox and the dog are animals
+word embeddings capture semantic similarity
+skip gram predicts context words

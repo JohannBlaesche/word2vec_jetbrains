@@ -8,7 +8,7 @@ def main():
 
     tokens = load_corpus("data/sample.txt")
 
-    encoded, word_to_idx, idx_to_word, freqs = build_vocab(tokens)
+    encoded, word_to_idx, _, freqs = build_vocab(tokens)
 
     pairs = make_skipgram_pairs(encoded, window=2)
 
